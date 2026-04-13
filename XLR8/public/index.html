@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XLR8 REBORN | Premium Music Player</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Metadata extraction library (Local) -->
+    <script src="jsmediatags.min.js"></script>
+</head>
+<body>
+    <div id="app-backdrop"></div>
+    
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fas fa-bolt neon-icon"></i>
+                <span>XLR8</span>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-section">PLAYLISTS</div>
+                <div id="playlist-container-sidebar">
+                    <!-- Dynamic Playlists -->
+                </div>
+                <button class="btn-add-playlist" id="btn-open-create-playlist">
+                    <i class="fas fa-plus-circle"></i> Nueva Playlist
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-settings" id="btn-open-theme">
+                    <i class="fas fa-palette"></i> Tema
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="title-with-actions">
+                    <h1 id="active-playlist-name">Mi Biblioteca</h1>
+                    <button class="btn-delete-playlist" id="btn-delete-playlist" title="Eliminar lista completa">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="btn-action" id="btn-rescan-library" title="Reparar Identidad de todas las canciones" style="margin-left: 10px; background: #3b82f6;">
+                        <i class="fas fa-magic"></i> REPARAR METADATOS
+                    </button>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-action" id="btn-import-local">
+                        <i class="fas fa-file-import"></i> IMPORTAR
+                    </button>
+                </div>
+            </header>
+
+            <div class="scroll-container">
+                <table class="song-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Título</th>
+                            <th>Álbum</th>
+                            <th><i class="far fa-clock"></i></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="song-list-body">
+                        <!-- Dynamic Songs -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Player Bar -->
+        <footer class="player-bar">
+            <div class="current-track-info">
+                <div class="track-artwork" id="player-artwork">
+                    <i class="fas fa-music"></i>
+                </div>
+                <div class="track-details">
+                    <div class="track-title" id="player-title">Selecciona una pista</div>
+                    <div class="track-artist" id="player-artist">XLR8 Reborn</div>
+                </div>
+            </div>
+
+            <div class="player-controls-container">
+                <div class="playback-buttons">
+                    <button class="btn-icon" id="btn-shuffle" title="Aleatorio"><i class="fas fa-random"></i></button>
+                    <button class="btn-icon" id="btn-prev"><i class="fas fa-step-backward"></i></button>
+                    <button class="btn-play-toggle" id="btn-play-pause"><i class="fas fa-play"></i></button>
+                    <button class="btn-icon" id="btn-next"><i class="fas fa-step-forward"></i></button>
+                    <button class="btn-icon" id="btn-fullscreen" title="Modo Cine"><i class="fas fa-expand"></i></button>
+                </div>
+                <div class="progress-container">
+                    <span class="time-label" id="current-time">0:00</span>
+                    <div class="progress-bar-bg" id="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <span class="time-label" id="total-time">0:00</span>
+                </div>
+            </div>
+
+            <div class="player-secondary-controls">
+                <button class="btn-icon" id="btn-mute"><i class="fas fa-volume-up"></i></button>
+                <input type="range" id="volume-slider" min="0" max="100" value="80" class="volume-range">
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="modal-create-playlist">
+        <div class="modal">
+            <h2>Crear Nueva Playlist</h2>
+            <input type="text" id="input-playlist-name" placeholder="Nombre de la lista...">
+            <div class="modal-actions">
+                <button class="btn-secondary" id="btn-cancel-playlist">CANCELAR</button>
+                <button class="btn-primary" id="btn-save-playlist">CREAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-theme">
+        <div class="modal">
+            <h2>Personalización</h2>
+            <div class="theme-grid">
+                <div class="theme-option" data-bg="linear-gradient(45deg, #09090b, #18181b)">Original Dark</div>
+                <div class="theme-option" data-bg="linear-gradient(135deg, #1a1a2e, #16213e)">Deep Blue</div>
+                <div class="theme-option" data-bg="linear-gradient(135deg, #2d0b00, #140500)">Sunset Ember</div>
+                <div class="theme-option" data-bg="linear-gradient(135deg, #134e5e, #71b280)">Forest Glass</div>
+            </div>
+            <button class="btn-secondary" id="btn-close-theme">CERRAR</button>
+        </div>
+    </div>
+
+    <!-- Cinema Mode Overlay -->
+    <div id="fullscreen-player" class="fullscreen-overlay">
+        <button class="btn-close-fs" id="btn-close-fs"><i class="fas fa-compress"></i></button>
+        <div class="fs-content">
+            <div class="fs-artwork-container">
+                <img id="fs-artwork" src="" alt="Album Art">
+            </div>
+            <div class="fs-details">
+                <h1 id="fs-title">Título de la canción</h1>
+                <p id="fs-artist">Artista</p>
+                <p id="fs-album" class="fs-album-text">Álbum</p>
+                <div class="fs-progress-container">
+                    <div class="progress-bar-bg fs-progress-bar" id="fs-progress-bar">
+                        <div class="progress-fill" id="fs-progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Inputs -->
+    <input type="file" id="input-import-batch" multiple accept="audio/*" class="hidden">
+    
+    <div id="notify-container"></div>
+
+    <script src="app.js" type="module"></script>
+</body>
+</html>
